@@ -1,0 +1,52 @@
+﻿@model List<Person>
+@{
+    ViewData["Title"] = "People Manager";
+}
+
+<h2>People Manager</h2>
+
+<!-- Search Form -->
+<form method="get">
+    <input type="text" name="searchName" placeholder="Search by name..." />
+    <input type="text" name="searchContact" placeholder="Search by phone or email..." />
+    <button type="submit">Search</button>
+</form>
+
+<!-- Add Person Form -->
+<form method="post" asp-action="Add">
+    <input type="hidden" name="Id" value="0" />
+    <input type="text" name="Name" placeholder="Name" required />
+    <input type="text" name="PhoneNumber" placeholder="Phone" required />
+    <input type="text" name="Email" placeholder="Email" required />
+    <button type="submit">Add Person</button>
+</form>
+
+@if (TempData["Error"] != null)
+{
+    <p style="color: red;">@TempData["Error"]</p>
+}
+
+<!-- People List -->
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Email</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var person in Model)
+        {
+            <tr>
+                <td>@person.Name</td>
+                <td>@person.PhoneNumber</td>
+                <td>@person.Email</td>
+                <td>
+                    <a asp-action="Delete" asp-route-id="@person.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
