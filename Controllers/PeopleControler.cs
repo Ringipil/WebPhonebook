@@ -29,7 +29,7 @@ public class PeopleController : Controller
         _dbHandler.AddPerson(person);
         return RedirectToAction("Index");
     }
-//####
+
     [HttpPost]
     public IActionResult Update(Person person)
     {
@@ -42,7 +42,18 @@ public class PeopleController : Controller
         _dbHandler.UpdatePerson(person);
         return RedirectToAction("Index");
     }
-//####
+    public IActionResult Edit(int id)
+    {
+        var person = _dbHandler.LoadPeople().FirstOrDefault(p => p.Id == id);
+        if (person == null)
+        {
+            TempData["Error"] = "Person not found.";
+            return RedirectToAction("Index");
+        }
+
+        return View(person);
+    }
+
     public IActionResult Delete(int id)
     {
         _dbHandler.DeletePerson(id);
