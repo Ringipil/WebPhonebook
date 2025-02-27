@@ -1,0 +1,31 @@
+﻿@model WebPhonebook.Models.Person
+@{
+    ViewData["Title"] = "Edit Person";
+}
+
+<h2>Edit Person</h2>
+
+@if (TempData["Error"] != null)
+{
+    <p style="color: red;">@TempData["Error"]</p>
+}
+
+<form method="post" asp-action="Update">
+    <input type="hidden" asp-for="Id" />
+
+    <div>
+        <label>Name:</label>
+        <input type="text" asp-for="Name" required />
+    </div>
+    <div>
+        <label>Phone Number:</label>
+        <input type="text" asp-for="PhoneNumber" required />
+    </div>
+    <div>
+        <label>Email:</label>
+        <input type="email" asp-for="Email" required />
+    </div>
+
+    <button type="submit">Save Changes</button>
+    <a asp-action="Index">Cancel</a>
+</form>

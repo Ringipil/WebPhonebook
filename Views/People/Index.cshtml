@@ -44,6 +44,7 @@
                 <td>@person.PhoneNumber</td>
                 <td>@person.Email</td>
                 <td>
+                    <a asp-action="Edit" asp-route-id="@person.Id">Edit</a>
                     <a asp-action="Delete" asp-route-id="@person.Id">Delete</a>
                 </td>
             </tr>
