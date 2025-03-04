@@ -1,0 +1,7 @@
+﻿@model IndexViewModel
+
+<form asp-action="Index" method="get">
+    <input asp-for="SearchName" placeholder="Search by name..." />
+    <input asp-for="SearchContact" placeholder="Search by phone or email..." />
+    <button type="submit">Search</button>
+</form>

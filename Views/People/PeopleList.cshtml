@@ -1,0 +1,26 @@
+﻿@model List<Person>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Email</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var person in Model)
+        {
+            <tr>
+                <td>@person.Name</td>
+                <td>@person.PhoneNumber</td>
+                <td>@person.Email</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@person.Id">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@person.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

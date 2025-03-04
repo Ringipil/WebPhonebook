@@ -74,7 +74,7 @@ public class SqlDatabaseHandler : IDatabaseHandler
             }
         }
     }
-//####
+
     public void UpdatePerson(Person person)
     {
         using (var connection = new SqlConnection(connectionString))
@@ -91,7 +91,7 @@ public class SqlDatabaseHandler : IDatabaseHandler
             }
         }
     }
-//####
+
     public void DeletePerson(int id)
     {
         using (var connection = new SqlConnection(connectionString))

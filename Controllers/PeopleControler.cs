@@ -11,13 +11,16 @@ public class PeopleController : Controller
         _dbHandler = dbHandler;
     }
 
-    public IActionResult Index(string searchName = "", string searchContact = "")
+    public IActionResult Index(IndexViewModel model)
     {
-        var people = _dbHandler.LoadPeople(searchName, searchContact);
-        return View(people);
+        var filteredPeople = _dbHandler.LoadPeople(model.SearchName, model.SearchContact);
+
+        model.People = filteredPeople;
+
+        return View(model);
     }
 
-    [HttpPost]
+    [HttpPost, ValidateAntiForgeryToken]
     public IActionResult Add(Person person)
     {
         if (string.IsNullOrEmpty(person.Name) || string.IsNullOrEmpty(person.PhoneNumber) || string.IsNullOrEmpty(person.Email))
@@ -29,7 +32,7 @@ public class PeopleController : Controller
         _dbHandler.AddPerson(person);
         return RedirectToAction("Index");
     }
-//####
+
     [HttpPost]
     public IActionResult Update(Person person)
     {
@@ -42,7 +45,18 @@ public class PeopleController : Controller
         _dbHandler.UpdatePerson(person);
         return RedirectToAction("Index");
     }
-//####
+
+    public IActionResult Edit(int id)
+    {
+        var person = _dbHandler.LoadPeople().FirstOrDefault(p => p.Id == id);
+        if (person == null)
+        {
+            TempData["Error"] = "Person not found.";
+            return RedirectToAction("Index");
+        }
+        return View(person);
+    }
+
     public IActionResult Delete(int id)
     {
         _dbHandler.DeletePerson(id);
