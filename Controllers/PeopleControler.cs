@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using WebPhonebook.Interfaces;
 using WebPhonebook.Models;
 
