@@ -1,5 +1,4 @@
 ﻿using Microsoft.Data.SqlClient;
-using WebPhonebook;
 using WebPhonebook.Interfaces;
 using WebPhonebook.Models;
 
@@ -192,4 +191,3 @@ public class SqlDatabaseHandler : IDatabaseHandler
         }
     }
 }
-
