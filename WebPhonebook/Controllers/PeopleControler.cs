@@ -72,7 +72,7 @@ public class PeopleController : Controller
 
     public IActionResult Edit(int id)
     {
-        var person = _dbHandler.LoadPeople().FirstOrDefault(person => person.Id == id);
+        var person = _dbHandler.LoadPeople().FirstOrDefault(p => p.Id == id);
 
         if (person == null)
         {
@@ -84,7 +84,7 @@ public class PeopleController : Controller
 
     public IActionResult Delete(int id)
     {
-        var personExists = _dbHandler.LoadPeople().Any(person => person.Id == id);
+        var personExists = _dbHandler.LoadPeople().Any(p => p.Id == id);
 
         if (!personExists)
         {
