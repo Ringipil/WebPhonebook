@@ -1,35 +1,45 @@
-using static task0.Form1;
-using static task0.EfDatabaseHandler;
-using static task0.SqlDatabaseHandler;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using System;
+using System.Windows.Forms;
+using WebPhonebook;
+using WebPhonebook.Models;
 
-using System.Data.Entity;
-using System.Data.SQLite;
-using System.Data.Entity.Core.Common;
-using System.Data.SQLite.EF6;
-
-
-namespace task0
+namespace DesktopPhonebook
 {
-
-    public class SQLiteDbConfiguration : DbConfiguration
-    {
-        public SQLiteDbConfiguration()
-        {
-            SetProviderFactory("System.Data.SQLite", SQLiteFactory.Instance);
-            SetProviderServices("System.Data.SQLite",
-                (DbProviderServices)SQLiteProviderFactory.Instance.GetService(typeof(DbProviderServices)));
-        }
-    }
-
     static class Program
     {
         [STAThread]
         static void Main()
         {
+            var host = CreateHostBuilder().Build();
+            var services = host.Services;
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            DbConfiguration.SetConfiguration(new SQLiteDbConfiguration());
-            Application.Run(new Form1());
+
+            using (var scope = services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<PeopleDbContext>();
+                //dbContext.Database.Migrate(); // ✅ Ensures the database is created and migrated
+            }
+
+            Application.Run(services.GetRequiredService<Form1>());
+        }
+
+        public static IHostBuilder CreateHostBuilder()
+        {
+            return Host.CreateDefaultBuilder()
+                .ConfigureServices((context, services) =>
+                {
+                    services.AddDbContext<PeopleDbContext>(options =>
+                        options.UseSqlServer("Server=.\\SQLEXPRESS;Database=PeopleDB;Trusted_Connection=True;MultipleActiveResultSets=true;Encrypt=False"));
+
+                    services.AddScoped<EfDatabaseHandler>(); // ✅ Register EfDatabaseHandler
+                    services.AddScoped<SqlDatabaseHandler>(); // ✅ Register SqlDatabaseHandler
+                    services.AddSingleton<Form1>(); // ✅ Inject Form1
+                });
         }
     }
 }

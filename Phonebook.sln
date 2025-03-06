@@ -6,6 +6,11 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebPhonebook", "WebPhonebook\WebPhonebook.csproj", "{1D1E8C7F-BB3C-4189-91E9-7763A73483E4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DesktopPhonebook", "DesktopPhonebook\DesktopPhonebook.csproj", "{D5D668A4-C559-48C6-9900-FDC6EF6CDC2D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1D1E8C7F-BB3C-4189-91E9-7763A73483E4} = {1D1E8C7F-BB3C-4189-91E9-7763A73483E4}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhonebookServices", "PhonebookServices\PhonebookServices.csproj", "{F3F004AB-2C2B-4AE1-B9DC-B597A07C2E2D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +26,10 @@ Global
 		{D5D668A4-C559-48C6-9900-FDC6EF6CDC2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D5D668A4-C559-48C6-9900-FDC6EF6CDC2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D5D668A4-C559-48C6-9900-FDC6EF6CDC2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3F004AB-2C2B-4AE1-B9DC-B597A07C2E2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3F004AB-2C2B-4AE1-B9DC-B597A07C2E2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3F004AB-2C2B-4AE1-B9DC-B597A07C2E2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3F004AB-2C2B-4AE1-B9DC-B597A07C2E2D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

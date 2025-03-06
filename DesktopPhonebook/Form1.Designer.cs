@@ -1,4 +1,4 @@
-namespace task0
+namespace DesktopPhonebook
 {
     partial class Form1
     {

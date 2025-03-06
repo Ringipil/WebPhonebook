@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using WebPhonebook.Models;
 
-namespace WebPhonebook.Models
+namespace WebPhonebook
 {
     public class PeopleDbContext : DbContext
     {

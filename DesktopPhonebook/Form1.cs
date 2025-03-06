@@ -1,4 +1,9 @@
-namespace task0
+﻿using DesktopPhonebook;
+using WebPhonebook;
+using WebPhonebook.Interfaces;
+using WebPhonebook.Models;
+
+namespace DesktopPhonebook
 {
     public partial class Form1 : Form
     {
@@ -10,15 +15,20 @@ namespace task0
         private List<string> middleNames = new List<string>();
         private List<string> lastNames = new List<string>();
         private DateTime? startTime = null;
-        private IDatabaseHandlerBase dbHandler;
-        private SqlDatabaseHandler sqlDatabaseHandler = new SqlDatabaseHandler();
-        private EfDatabaseHandler efDatabaseHandler = new EfDatabaseHandler();
+        private IDatabaseHandler dbHandler;
+        private readonly SqlDatabaseHandler sqlDatabaseHandler;
+        private readonly EfDatabaseHandler efDatabaseHandler;
 
-        public Form1()
+        public Form1(PeopleDbContext dbContext)
         {
             InitializeComponent();
             LoadNamesFromFiles();
-            dbHandler = new EfDatabaseHandler();
+
+            sqlDatabaseHandler = new SqlDatabaseHandler();
+            efDatabaseHandler = new EfDatabaseHandler(dbContext);
+
+            dbHandler = efDatabaseHandler;
+
             sqlDatabaseHandler.InitializeDatabase();
             LoadPeople();
         }
@@ -26,7 +36,6 @@ namespace task0
         private void LoadNamesFromFiles()
         {
             string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-
             firstNames = File.ReadAllLines(Path.Combine(baseDirectory, "firstNames.txt")).ToList();
             middleNames = File.ReadAllLines(Path.Combine(baseDirectory, "middleNames.txt")).ToList();
             lastNames = File.ReadAllLines(Path.Combine(baseDirectory, "lastNames.txt")).ToList();
@@ -176,7 +185,7 @@ namespace task0
         private async Task GenerateUniqueNames(List<string> firstNames, List<string> middleNames, List<string> lastNames, CancellationToken cancellationToken,
             Action<string> updateStatus, Action<int, double, bool> afterGeneration)
         {
-            dbHandler.GenerateUniqueNames(firstNames, middleNames, lastNames, cancellationToken, updateStatus, afterGeneration);
+            await dbHandler.GenerateUniqueNames(firstNames, middleNames, lastNames, cancellationToken, updateStatus, afterGeneration);
         }
 
         private void buttonDelete_Click(object sender, EventArgs e)
@@ -279,12 +288,14 @@ namespace task0
         {
             if (radioSqlHandler.Checked)
             {
-                dbHandler = new SqlDatabaseHandler();
+                dbHandler = sqlDatabaseHandler;
             }
             else if (radioEfHandler.Checked)
             {
-                dbHandler = new EfDatabaseHandler();
+                dbHandler = efDatabaseHandler;
             }
+
+            sqlDatabaseHandler.InitializeDatabase();
             LoadPeople();
         }
     }

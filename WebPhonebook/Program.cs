@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using WebPhonebook;
 using WebPhonebook.Interfaces;
-using WebPhonebook.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,12 +15,32 @@ if (string.IsNullOrEmpty(connectionString))
 builder.Services.AddDbContext<PeopleDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-builder.Services.AddScoped<IDatabaseHandler, SqlDatabaseHandler>();
+builder.Services.AddScoped<SqlDatabaseHandler>();
+builder.Services.AddScoped<EfDatabaseHandler>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddSession();
 builder.Services.AddHttpContextAccessor();
 
+builder.Services.AddScoped<IDatabaseHandler>(provider =>
+{
+    var httpContextAccessor = provider.GetRequiredService<IHttpContextAccessor>();
+    var selectedHandler = httpContextAccessor.HttpContext?.Session.GetString("SelectedHandler") ?? "ef";
+
+    return selectedHandler == "sql"
+        ? provider.GetRequiredService<SqlDatabaseHandler>()
+        : provider.GetRequiredService<EfDatabaseHandler>();
+});
+
+builder.Services.AddControllersWithViews();
+
+
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var sqlDbHandler = scope.ServiceProvider.GetRequiredService<SqlDatabaseHandler>();
+    sqlDbHandler.InitializeDatabase();
+}
 
 app.UseSession();
 app.UseRouting();
@@ -35,5 +55,3 @@ app.UseEndpoints(endpoints =>
 });
 
 app.Run();
-
-
