@@ -1,4 +1,4 @@
-﻿@model Person
+﻿@* @model Person
 
 <form asp-action="Add" method="post">
     <input asp-for="Name" placeholder="Name" required />
@@ -9,6 +9,21 @@
 
     <input asp-for="Email" placeholder="Email" required />
     <span asp-validation-for="Email" class="text-danger"></span>
+
+    <button type="submit">Add Person</button>
+</form> *@
+
+@model IndexViewModel
+
+<form asp-action="Add" method="post" asp-route-selectedHandler="@Model.SelectedHandler">
+    <input asp-for="NewPerson.Name" placeholder="Name" required />
+    @* <span asp-validation-for="NewPerson.Name" class="text-danger"></span> *@
+
+    <input asp-for="NewPerson.PhoneNumber" placeholder="Phone" required />
+    @* <span asp-validation-for="NewPerson.PhoneNumber" class="text-danger"></span> *@
+
+    <input asp-for="NewPerson.Email" placeholder="Email" required />
+    @* <span asp-validation-for="NewPerson.Email" class="text-danger"></span> *@
 
     <button type="submit">Add Person</button>
 </form>

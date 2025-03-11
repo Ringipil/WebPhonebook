@@ -13,52 +13,59 @@ public class PeopleController : Controller
         _efHandler = efHandler;
     }
 
-    private IDatabaseHandler _dbHandler
+    //private IDatabaseHandler _dbHandler
+    //{
+    //    get
+    //    {
+    //        string selectedhandler = HttpContext.Session.GetString("Selectedhandler") ?? "ef";
+    //        return selectedhandler == "sql" ? _sqlHandler : _efHandler;
+    //    }
+    //}
+
+    private IDatabaseHandler GetDbHandler(string selectedhandler)
     {
-        get
-        {
-            string selectedHandler = HttpContext.Session.GetString("SelectedHandler") ?? "ef";
-            return selectedHandler == "sql" ? _sqlHandler : _efHandler;
-        }
+        return selectedhandler == "sql" ? _sqlHandler : _efHandler;
     }
 
     public IActionResult Index(IndexViewModel model)
     {
-        model.People = _dbHandler.LoadPeople(model.SearchName, model.SearchContact);
+        model.People = GetDbHandler(model.SelectedHandler).LoadPeople(model.SearchName, model.SearchContact);
+        //model.SelectedHandler
 
-        ViewData["CurrentHandler"] = HttpContext.Session.GetString("SelectedHandler") ?? "ef";
+        //ViewData["CurrentHandler"] = HttpContext.Session.GetString("SelectedHandler") ?? "ef";
 
         return View(model);
     }
 
-    [HttpPost]
-    public IActionResult SwitchDatabaseHandler(string selectedHandler)
-    {
-        HttpContext.Session.SetString("SelectedHandler", selectedHandler == "sql" ? "sql" : "ef");
-        return RedirectToAction("Index");
-    }
+    //[HttpPost]
+    //public IActionResult SwitchDatabaseHandler(string selectedHandler)
+    //{
+    //    HttpContext.Session.SetString("SelectedHandler", selectedHandler == "sql" ? "sql" : "ef");
+    //    return RedirectToAction("Index", new IndexViewModel { SelectedHandler = selectedHandler });
+    //}
 
-    public IActionResult GetSwitchHandlerPartial()
-    {
-        ViewData["CurrentHandler"] = HttpContext.Session.GetString("SelectedHandler") ?? "ef";
-        return PartialView("SwitchDatabaseHandler");
-    }
+    //public IActionResult GetSwitchHandlerPartial()
+    //{
+    //    ViewData["CurrentHandler"] = HttpContext.Session.GetString("SelectedHandler") ?? "ef";
+    //    return PartialView("SwitchDatabaseHandler");
+    //}
 
     [HttpPost, ValidateAntiForgeryToken]
-    public IActionResult Add(Person person)
+    public IActionResult Add(IndexViewModel model, string selectedHandler)
     {
+        Person person = model.NewPerson;
         if (string.IsNullOrEmpty(person.Name) || string.IsNullOrEmpty(person.PhoneNumber) || string.IsNullOrEmpty(person.Email))
         {
             TempData["Error"] = "All fields must be filled.";
             return RedirectToAction("Index");
         }
 
-        _dbHandler.AddPerson(person);
+        GetDbHandler(selectedHandler).AddPerson(person);
         return RedirectToAction("Index");
     }
 
     [HttpPost]
-    public IActionResult Update(Person person)
+    public IActionResult Update(Person person, string selectedHandler)
     {
         if (person.Id == 0)
         {
@@ -66,13 +73,13 @@ public class PeopleController : Controller
             return RedirectToAction("Index");
         }
 
-        _dbHandler.UpdatePerson(person);
+        GetDbHandler(selectedHandler).UpdatePerson(person);
         return RedirectToAction("Index");
     }
 
-    public IActionResult Edit(int id)
+    public IActionResult Edit(int id, string selectedHandler)
     {
-        var person = _dbHandler.LoadPeople().FirstOrDefault(p => p.Id == id);
+        var person = GetDbHandler(selectedHandler).LoadPeople().FirstOrDefault(p => p.Id == id);
 
         if (person == null)
         {
@@ -82,9 +89,9 @@ public class PeopleController : Controller
         return View(person);
     }
 
-    public IActionResult Delete(int id)
+    public IActionResult Delete(int id, string selectedHandler)
     {
-        var personExists = _dbHandler.LoadPeople().Any(p => p.Id == id);
+        var personExists = GetDbHandler(selectedHandler).LoadPeople().Any(p => p.Id == id);
 
         if (!personExists)
         {
@@ -92,7 +99,7 @@ public class PeopleController : Controller
             return RedirectToAction("Index");
         }
 
-        _dbHandler.DeletePerson(id);
+        GetDbHandler(selectedHandler).DeletePerson(id);
         return RedirectToAction("Index");
     }
 }

@@ -1,4 +1,4 @@
-﻿@model List<Person>
+﻿@model IndexViewModel
 
 <table class="table">
     <thead>
@@ -10,15 +10,15 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var person in Model)
+        @foreach (var person in Model.People)
         {
             <tr>
                 <td>@person.Name</td>
                 <td>@person.PhoneNumber</td>
                 <td>@person.Email</td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@person.Id">Edit</a>
-                    <a asp-action="Delete" asp-route-id="@person.Id">Delete</a>
+                    <a asp-action="Edit" asp-route-id="@person.Id" asp-route-selectedHandler="@Model.SelectedHandler">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@person.Id" asp-route-selectedHandler="@Model.SelectedHandler">Delete</a>
                 </td>
             </tr>
         }

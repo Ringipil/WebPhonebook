@@ -27,7 +27,7 @@ namespace DesktopPhonebook
             sqlDatabaseHandler = new SqlDatabaseHandler();
             efDatabaseHandler = new EfDatabaseHandler(dbContext);
 
-            dbHandler = efDatabaseHandler;
+            dbHandler = sqlDatabaseHandler;
 
             sqlDatabaseHandler.InitializeDatabase();
             LoadPeople();

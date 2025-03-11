@@ -1,4 +1,6 @@
 ﻿@model IndexViewModel
+
+
 @{
     ViewData["Title"] = "People Manager";
 }
@@ -9,14 +11,14 @@
 <partial name="SearchForm"/>
 
 <!-- Add Person Form -->
-<partial name="AddPersonForm" model="Model.NewPerson" />
+<partial name="AddPersonForm" />
 
 <!-- Add Switch Handler Form -->
-<partial name="SwitchDatabaseHandler" />
+@* <partial name="SwitchDatabaseHandler" /> *@
 
 <!-- People list -->
 <div id="peopleListContainer">
-    <partial name="PeopleList" model="Model.People" />
+    <partial name="PeopleList" />
 </div>
 
 @if (TempData["Error"] != null)

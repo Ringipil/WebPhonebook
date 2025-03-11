@@ -10,7 +10,7 @@
     <p style="color: red;">@TempData["Error"]</p>
 }
 
-<form method="post" asp-action="Update">
+<form method="post" asp-action="Update" asp-route-selectedHandler="@Context.Request.Query["selectedHandler"]">
     <input type="hidden" asp-for="Id" />
 
     <div>

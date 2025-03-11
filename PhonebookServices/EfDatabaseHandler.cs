@@ -57,53 +57,61 @@ public class EfDatabaseHandler : IDatabaseHandler
     }
 
     public async Task GenerateUniqueNames(List<string> firstNames, List<string> middleNames, List<string> lastNames, CancellationToken cancellationToken,
-        Action<string> updateStatus, Action<int, double, bool> afterGeneration)
+    Action<string> updateStatus, Action<int, double, bool> afterGeneration)
     {
         DateTime startTime = DateTime.Now;
         int countAdded = 0;
         int countChecked = 0;
         bool stopRequested = false;
-        int lastReportedCount = 0;
         int nextUpdateThreshold = 1000;
 
-        foreach (var first in firstNames)
+        try
         {
-            foreach (var middle in middleNames)
+            foreach (var first in firstNames)
             {
-                foreach (var last in lastNames)
+                if (stopRequested) break;
+
+                foreach (var middle in middleNames)
                 {
-                    if (cancellationToken.IsCancellationRequested)
-                    {
-                        stopRequested = true;
-                        afterGeneration(countAdded, (DateTime.Now - startTime).TotalSeconds, stopRequested);
-                        return;
-                    }
+                    if (stopRequested) break;
 
-                    string fullName = $"{first} {middle} {last}";
-                    countChecked++;
-
-                    bool exists = await _dbContext.People.AnyAsync(p => p.Name == fullName, cancellationToken);
-                    if (!exists)
+                    foreach (var last in lastNames)
                     {
-                        var person = new Person
+                        if (cancellationToken.IsCancellationRequested)
                         {
-                            Name = fullName,
-                            PhoneNumber = "",
-                            Email = ""
-                        };
-                        _dbContext.People.Add(person);
-                        await _dbContext.SaveChangesAsync(cancellationToken);
-                        countAdded++;
-                    }
+                            stopRequested = true;
+                            break;
+                        }
 
-                    if (countChecked >= nextUpdateThreshold)
-                    {
-                        updateStatus($"{countAdded} added, {countChecked} checked");
-                        nextUpdateThreshold += 1000;
+                        string fullName = $"{first} {middle} {last}";
+                        countChecked++;
+
+                        bool exists = await _dbContext.People.AsNoTracking()
+                            .AnyAsync(p => p.Name == fullName, cancellationToken);
+
+                        if (!exists)
+                        {
+                            _dbContext.People.Add(new Person { Name = fullName, PhoneNumber = "", Email = "" });
+                            await _dbContext.SaveChangesAsync(cancellationToken);
+                            countAdded++;
+                        }
+
+                        if (countChecked >= nextUpdateThreshold)
+                        {
+                            updateStatus($"{countAdded} added, {countChecked} checked");
+                            nextUpdateThreshold += 1000;
+                        }
                     }
                 }
             }
         }
-        afterGeneration(countAdded, (DateTime.Now - startTime).TotalSeconds, stopRequested);
+        catch (OperationCanceledException)
+        {
+            stopRequested = true;
+        }
+        finally
+        {
+            afterGeneration(countAdded, (DateTime.Now - startTime).TotalSeconds, stopRequested);
+        }
     }
 }

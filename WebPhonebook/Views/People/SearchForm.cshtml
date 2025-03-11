@@ -3,5 +3,13 @@
 <form asp-action="Index" method="get">
     <input asp-for="SearchName" placeholder="Search by name..." />
     <input asp-for="SearchContact" placeholder="Search by phone or email..." />
+    <label>
+        <input type="radio" asp-for="SelectedHandler" value="sql" />
+        Use SQL Database Handler
+    </label>
+    <label>
+        <input type="radio" asp-for="SelectedHandler" value="ef" />
+        Use EF Core Database Handler
+    </label>
     <button type="submit">Search</button>
 </form>
