@@ -1,10 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Windows.Forms;
 using WebPhonebook;
-using WebPhonebook.Models;
 
 namespace DesktopPhonebook
 {
@@ -22,7 +19,6 @@ namespace DesktopPhonebook
             using (var scope = services.CreateScope())
             {
                 var dbContext = scope.ServiceProvider.GetRequiredService<PeopleDbContext>();
-                //dbContext.Database.Migrate(); // ✅ Ensures the database is created and migrated
             }
 
             Application.Run(services.GetRequiredService<Form1>());
@@ -36,9 +32,9 @@ namespace DesktopPhonebook
                     services.AddDbContext<PeopleDbContext>(options =>
                         options.UseSqlServer("Server=.\\SQLEXPRESS;Database=PeopleDB;Trusted_Connection=True;MultipleActiveResultSets=true;Encrypt=False"));
 
-                    services.AddScoped<EfDatabaseHandler>(); // ✅ Register EfDatabaseHandler
-                    services.AddScoped<SqlDatabaseHandler>(); // ✅ Register SqlDatabaseHandler
-                    services.AddSingleton<Form1>(); // ✅ Inject Form1
+                    services.AddScoped<EfDatabaseHandler>();
+                    services.AddScoped<SqlDatabaseHandler>();
+                    services.AddSingleton<Form1>();
                 });
         }
     }

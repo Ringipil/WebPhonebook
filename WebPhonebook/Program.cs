@@ -42,5 +42,11 @@ app.UseEndpoints(endpoints =>
         name: "default",
         pattern: "{controller=People}/{action=Index}/{id?}");
 });
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Upload}/{action=Index}/{id?}");
+});
 
 app.Run();

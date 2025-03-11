@@ -82,6 +82,7 @@ public class EfDatabaseHandler : IDatabaseHandler
                             stopRequested = true;
                             break;
                         }
+                        //cancellationToken.ThrowIfCancellationRequested();
 
                         string fullName = $"{first} {middle} {last}";
                         countChecked++;

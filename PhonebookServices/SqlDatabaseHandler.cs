@@ -5,11 +5,9 @@ using WebPhonebook.Models;
 public class SqlDatabaseHandler : IDatabaseHandler
 {
     private const string connectionString = "Server=.\\SQLEXPRESS;Database=PeopleDB;Trusted_Connection=True;MultipleActiveResultSets=true;Encrypt=false";
-    //private readonly PeopleDbContext _dbContext;
 
-    public SqlDatabaseHandler(/*PeopleDbContext dbContext*/)
+    public SqlDatabaseHandler()
     {
-        //_dbContext = dbContext;
     }
 
     public void InitializeDatabase()

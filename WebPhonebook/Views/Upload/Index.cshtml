@@ -1,0 +1,31 @@
+﻿@model WebPhonebook.Models.UploadViewModel
+@{
+    ViewData["Title"] = "Upload Files";
+}
+
+<h2>Upload Name Files</h2>
+
+@if (ViewBag.Message != null)
+{
+    <p style="color: green;">@ViewBag.Message</p>
+}
+@if (ViewBag.Error != null)
+{
+    <p style="color: red;">@ViewBag.Error</p>
+}
+
+<form asp-action="Upload" asp-controller="Upload" method="post" enctype="multipart/form-data">
+    <div>
+        <label>First Names File:</label>
+        <input asp-for="FirstNamesFile" type="file" required />
+    </div>
+    <div>
+        <label>Middle Names File:</label>
+        <input asp-for="MiddleNamesFile" type="file" required />
+    </div>
+    <div>
+        <label>Last Names File:</label>
+        <input asp-for="LastNamesFile" type="file" required />
+    </div>
+    <button type="submit">Upload</button>
+</form>
