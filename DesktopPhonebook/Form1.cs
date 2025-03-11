@@ -1,6 +1,4 @@
-﻿using DesktopPhonebook;
-using WebPhonebook;
-using WebPhonebook.Interfaces;
+﻿using WebPhonebook.Interfaces;
 using WebPhonebook.Models;
 
 namespace DesktopPhonebook
@@ -16,18 +14,17 @@ namespace DesktopPhonebook
         private List<string> lastNames = new List<string>();
         private DateTime? startTime = null;
         private IDatabaseHandler dbHandler;
-        private readonly SqlDatabaseHandler sqlDatabaseHandler;
-        private readonly EfDatabaseHandler efDatabaseHandler;
+        private readonly SqlDatabaseHandler _sqlDatabaseHandler;
+        private readonly EfDatabaseHandler _efDatabaseHandler;
 
-        public Form1(PeopleDbContext dbContext)
+        public Form1(SqlDatabaseHandler sqlDatabaseHandler, EfDatabaseHandler efDatabaseHandler)
         {
             InitializeComponent();
             LoadNamesFromFiles();
-
-            sqlDatabaseHandler = new SqlDatabaseHandler();
-            efDatabaseHandler = new EfDatabaseHandler(dbContext);
-
             dbHandler = sqlDatabaseHandler;
+
+            _efDatabaseHandler = efDatabaseHandler;
+            _sqlDatabaseHandler = sqlDatabaseHandler;
 
             sqlDatabaseHandler.InitializeDatabase();
             LoadPeople();
@@ -288,14 +285,14 @@ namespace DesktopPhonebook
         {
             if (radioSqlHandler.Checked)
             {
-                dbHandler = sqlDatabaseHandler;
+                dbHandler = _sqlDatabaseHandler;
             }
             else if (radioEfHandler.Checked)
             {
-                dbHandler = efDatabaseHandler;
+                dbHandler = _efDatabaseHandler;
             }
 
-            sqlDatabaseHandler.InitializeDatabase();
+            _sqlDatabaseHandler.InitializeDatabase();
             LoadPeople();
         }
     }

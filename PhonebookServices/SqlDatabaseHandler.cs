@@ -1,13 +1,15 @@
 ﻿using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 using WebPhonebook.Interfaces;
 using WebPhonebook.Models;
 
 public class SqlDatabaseHandler : IDatabaseHandler
 {
-    private const string connectionString = "Server=.\\SQLEXPRESS;Database=PeopleDB;Trusted_Connection=True;MultipleActiveResultSets=true;Encrypt=false";
+    private string connectionString;
 
-    public SqlDatabaseHandler()
+    public SqlDatabaseHandler(IConfiguration configuration)
     {
+        connectionString = configuration.GetConnectionString("DefaultConnection") ?? "Server=.\\SQLEXPRESS;Database=PeopleDB;Trusted_Connection=True;MultipleActiveResultSets=true;Encrypt=false";
     }
 
     public void InitializeDatabase()
