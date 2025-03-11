@@ -5,16 +5,6 @@ public class IndexViewModel
 {
     private decimal _quantity;
 
-    //public decimal GetQuantity()
-    //{
-    //    return _quantity;
-    //}
-
-    //public void SetSafeQuantity(decimal q)
-    //{
-    //    _quantity = Math.Min(Math.Max(q, 1), 100000);
-    //}
-
     public decimal Quantity
     {
         get

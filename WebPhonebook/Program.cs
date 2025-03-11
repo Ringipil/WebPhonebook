@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebPhonebook;
-using WebPhonebook.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,16 +19,6 @@ builder.Services.AddScoped<EfDatabaseHandler>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddSession();
 builder.Services.AddHttpContextAccessor();
-
-//builder.Services.AddScoped<IDatabaseHandler>(provider =>
-//{
-//    var httpContextAccessor = provider.GetRequiredService<IHttpContextAccessor>();
-//    var selectedHandler = httpContextAccessor.HttpContext?.Session.GetString("SelectedHandler") ?? "ef";
-
-//    return selectedHandler == "sql"
-//        ? provider.GetRequiredService<SqlDatabaseHandler>()
-//        : provider.GetRequiredService<EfDatabaseHandler>();
-//});
 
 builder.Services.AddControllersWithViews();
 

@@ -13,15 +13,6 @@ public class PeopleController : Controller
         _efHandler = efHandler;
     }
 
-    //private IDatabaseHandler _dbHandler
-    //{
-    //    get
-    //    {
-    //        string selectedhandler = HttpContext.Session.GetString("Selectedhandler") ?? "ef";
-    //        return selectedhandler == "sql" ? _sqlHandler : _efHandler;
-    //    }
-    //}
-
     private IDatabaseHandler GetDbHandler(string selectedhandler)
     {
         return selectedhandler == "sql" ? _sqlHandler : _efHandler;
@@ -30,25 +21,8 @@ public class PeopleController : Controller
     public IActionResult Index(IndexViewModel model)
     {
         model.People = GetDbHandler(model.SelectedHandler).LoadPeople(model.SearchName, model.SearchContact);
-        //model.SelectedHandler
-
-        //ViewData["CurrentHandler"] = HttpContext.Session.GetString("SelectedHandler") ?? "ef";
-
         return View(model);
     }
-
-    //[HttpPost]
-    //public IActionResult SwitchDatabaseHandler(string selectedHandler)
-    //{
-    //    HttpContext.Session.SetString("SelectedHandler", selectedHandler == "sql" ? "sql" : "ef");
-    //    return RedirectToAction("Index", new IndexViewModel { SelectedHandler = selectedHandler });
-    //}
-
-    //public IActionResult GetSwitchHandlerPartial()
-    //{
-    //    ViewData["CurrentHandler"] = HttpContext.Session.GetString("SelectedHandler") ?? "ef";
-    //    return PartialView("SwitchDatabaseHandler");
-    //}
 
     [HttpPost, ValidateAntiForgeryToken]
     public IActionResult Add(IndexViewModel model, string selectedHandler)
