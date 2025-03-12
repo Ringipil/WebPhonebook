@@ -1,12 +1,13 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+using PhonebookServices;
 using WebPhonebook.Interfaces;
 using WebPhonebook.Models;
 
 public class SqlDatabaseHandler : IDatabaseHandler
 {
     private string connectionString;
-
+    private readonly string nameFilesDirectory;
     public SqlDatabaseHandler(IConfiguration configuration)
     {
         connectionString = configuration.GetConnectionString("DefaultConnection") ?? "Server=.\\SQLEXPRESS;Database=PeopleDB;Trusted_Connection=True;MultipleActiveResultSets=true;Encrypt=false";
@@ -132,8 +133,7 @@ public class SqlDatabaseHandler : IDatabaseHandler
         }
     }
 
-
-    public async Task GenerateUniqueNames(List<string> firstNames, List<string> middleNames, List<string> lastNames, CancellationToken cancellationToken,
+    public async Task GenerateUniqueNames(NameLoader nameLoader, CancellationToken cancellationToken,
     Action<string> updateStatus, Action<int, double, bool> afterGeneration)
     {
         using (var connection = new SqlConnection(connectionString))
@@ -146,11 +146,11 @@ public class SqlDatabaseHandler : IDatabaseHandler
             int lastReportedCount = 0;
             int nextUpdateThreshold = 1000;
 
-            foreach (var first in firstNames)
+            foreach (var first in nameLoader.FirstNames)
             {
-                foreach (var middle in middleNames)
+                foreach (var middle in nameLoader.MiddleNames)
                 {
-                    foreach (var last in lastNames)
+                    foreach (var last in nameLoader.LastNames)
                     {
                         if (cancellationToken.IsCancellationRequested)
                         {

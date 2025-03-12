@@ -16,7 +16,7 @@ builder.Services.AddDbContext<PeopleDbContext>(options =>
 
 builder.Services.AddScoped<SqlDatabaseHandler>();
 builder.Services.AddScoped<EfDatabaseHandler>();
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 builder.Services.AddSession();
 builder.Services.AddHttpContextAccessor();
 
@@ -41,12 +41,6 @@ app.UseEndpoints(endpoints =>
     endpoints.MapControllerRoute(
         name: "default",
         pattern: "{controller=People}/{action=Index}/{id?}");
-});
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllerRoute(
-        name: "default",
-        pattern: "{controller=Upload}/{action=Index}/{id?}");
 });
 
 app.Run();

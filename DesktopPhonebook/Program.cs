@@ -1,8 +1,8 @@
-﻿using System.Configuration;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using PhonebookServices;
 using WebPhonebook;
 
 namespace DesktopPhonebook
@@ -18,26 +18,32 @@ namespace DesktopPhonebook
                 .Build();
 
             var host = Host.CreateDefaultBuilder()
-            .ConfigureServices((context, services) =>
-            {
-                services.AddSingleton<IConfiguration>(configuration);
-                services.AddDbContext<PeopleDbContext>();
-                services.AddSingleton<SqlDatabaseHandler>();
-                services.AddSingleton<EfDatabaseHandler>();
-                services.AddSingleton<Form1>();
-            })
-            .Build();
+                .ConfigureServices((context, services) =>
+                {
+                    services.AddDbContext<PeopleDbContext>(options =>
+                    {
+                        options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+                    });
+                    services.AddSingleton<IConfiguration>(configuration);
+                    services.AddSingleton<SqlDatabaseHandler>();
+                    services.AddSingleton<EfDatabaseHandler>();
+                    services.AddSingleton<NameLoader>();
+                    services.AddSingleton<Form1>();
+                })
+                .Build();
+
             var services = host.Services;
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-
             using (var scope = services.CreateScope())
             {
                 var dbContext = scope.ServiceProvider.GetRequiredService<PeopleDbContext>();
+                dbContext.Database.EnsureCreated();
             }
 
             Application.Run(services.GetRequiredService<Form1>());
         }
     }
 }
+

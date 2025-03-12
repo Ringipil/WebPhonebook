@@ -1,4 +1,5 @@
-﻿using WebPhonebook.Interfaces;
+﻿using PhonebookServices;
+using WebPhonebook.Interfaces;
 using WebPhonebook.Models;
 
 namespace DesktopPhonebook
@@ -9,33 +10,25 @@ namespace DesktopPhonebook
         private Person selectedPerson = null;
         private CancellationTokenSource cancellationTokenSource = null;
         private int namesGenerated = 0;
-        private List<string> firstNames = new List<string>();
-        private List<string> middleNames = new List<string>();
-        private List<string> lastNames = new List<string>();
         private DateTime? startTime = null;
         private IDatabaseHandler dbHandler;
         private readonly SqlDatabaseHandler _sqlDatabaseHandler;
         private readonly EfDatabaseHandler _efDatabaseHandler;
+        private readonly NameLoader _nameLoader;
 
-        public Form1(SqlDatabaseHandler sqlDatabaseHandler, EfDatabaseHandler efDatabaseHandler)
+        public Form1(SqlDatabaseHandler sqlDatabaseHandler, EfDatabaseHandler efDatabaseHandler, NameLoader nameLoader)
         {
             InitializeComponent();
-            LoadNamesFromFiles();
             dbHandler = sqlDatabaseHandler;
 
             _efDatabaseHandler = efDatabaseHandler;
             _sqlDatabaseHandler = sqlDatabaseHandler;
+            _nameLoader = nameLoader;
+
+            nameLoader.LoadNamesFromFiles();
 
             sqlDatabaseHandler.InitializeDatabase();
             LoadPeople();
-        }
-
-        private void LoadNamesFromFiles()
-        {
-            string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            firstNames = File.ReadAllLines(Path.Combine(baseDirectory, "firstNames.txt")).ToList();
-            middleNames = File.ReadAllLines(Path.Combine(baseDirectory, "middleNames.txt")).ToList();
-            lastNames = File.ReadAllLines(Path.Combine(baseDirectory, "lastNames.txt")).ToList();
         }
 
         private void LoadPeople(string filterByName = "", string filterByContact = "")
@@ -166,7 +159,7 @@ namespace DesktopPhonebook
             {
                 try
                 {
-                    await GenerateUniqueNames(firstNames, middleNames, lastNames, token, UpdateStatus, AfterGeneration);
+                    await GenerateUniqueNames(token, UpdateStatus, AfterGeneration);
                 }
                 catch (OperationCanceledException)
                 {
@@ -179,10 +172,10 @@ namespace DesktopPhonebook
             });
         }
 
-        private async Task GenerateUniqueNames(List<string> firstNames, List<string> middleNames, List<string> lastNames, CancellationToken cancellationToken,
+        private async Task GenerateUniqueNames(CancellationToken cancellationToken,
             Action<string> updateStatus, Action<int, double, bool> afterGeneration)
         {
-            await dbHandler.GenerateUniqueNames(firstNames, middleNames, lastNames, cancellationToken, updateStatus, afterGeneration);
+            await dbHandler.GenerateUniqueNames(_nameLoader, cancellationToken, updateStatus, afterGeneration);
         }
 
         private void buttonDelete_Click(object sender, EventArgs e)

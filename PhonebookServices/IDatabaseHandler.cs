@@ -1,4 +1,5 @@
-﻿using WebPhonebook.Models;
+﻿using PhonebookServices;
+using WebPhonebook.Models;
 
 namespace WebPhonebook.Interfaces
 {
@@ -9,7 +10,7 @@ namespace WebPhonebook.Interfaces
         void AddPerson(Person person);
         void UpdatePerson(Person person);
         void DeletePerson(int id);
-        Task GenerateUniqueNames(List<string> firstNames, List<string> middleNames, List<string> lastNames, CancellationToken cancellationToken,
+        Task GenerateUniqueNames(NameLoader loadnames, CancellationToken cancellationToken,
     Action<string> updateStatus, Action<int, double, bool> afterGeneration);
     }
 }

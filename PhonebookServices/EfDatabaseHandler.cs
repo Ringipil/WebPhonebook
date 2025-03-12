@@ -2,11 +2,13 @@
 using WebPhonebook;
 using WebPhonebook.Interfaces;
 using WebPhonebook.Models;
+using Microsoft.Extensions.Configuration;
+using PhonebookServices;
 
 public class EfDatabaseHandler : IDatabaseHandler
 {
     private readonly PeopleDbContext _dbContext;
-
+    private readonly string nameFilesDirectory;
     public EfDatabaseHandler(PeopleDbContext dbContext)
     {
         _dbContext = dbContext;
@@ -56,7 +58,7 @@ public class EfDatabaseHandler : IDatabaseHandler
         }
     }
 
-    public async Task GenerateUniqueNames(List<string> firstNames, List<string> middleNames, List<string> lastNames, CancellationToken cancellationToken,
+    public async Task GenerateUniqueNames(NameLoader nameLoader, CancellationToken cancellationToken,
     Action<string> updateStatus, Action<int, double, bool> afterGeneration)
     {
         DateTime startTime = DateTime.Now;
@@ -67,22 +69,21 @@ public class EfDatabaseHandler : IDatabaseHandler
 
         try
         {
-            foreach (var first in firstNames)
+            foreach (var first in nameLoader.FirstNames)
             {
                 if (stopRequested) break;
 
-                foreach (var middle in middleNames)
+                foreach (var middle in nameLoader.MiddleNames)
                 {
                     if (stopRequested) break;
 
-                    foreach (var last in lastNames)
+                    foreach (var last in nameLoader.LastNames)
                     {
                         if (cancellationToken.IsCancellationRequested)
                         {
                             stopRequested = true;
                             break;
                         }
-                        //cancellationToken.ThrowIfCancellationRequested();
 
                         string fullName = $"{first} {middle} {last}";
                         countChecked++;
