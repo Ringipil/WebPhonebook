@@ -1,0 +1,37 @@
+﻿@{
+    ViewData["Title"] = "Generate Unique Names";
+}
+
+<h2>Generate Unique Names</h2>
+
+@if (!string.IsNullOrEmpty(TempData["Message"] as string))
+{
+    <div style="border: 1px solid #ccc; padding: 10px; background-color: #f9f9f9; margin-bottom: 10px;">
+        <strong>@TempData["Message"]</strong>
+    </div>
+}
+
+<!-- Start & Stop Buttons -->
+<form asp-action="Generate" asp-controller="People" method="post">
+    <button type="submit">Start Generation</button>
+</form>
+
+<form asp-action="StopGeneration" asp-controller="People" method="post">
+    <button type="submit" style="background-color: red; color: white;">Stop Generation</button>
+</form>
+
+<p id="status"></p>
+
+<script>
+    function updateStatus() {
+        fetch('/People/GetGenerationStatus')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("status").innerText = data;
+                setTimeout(updateStatus, 3000);
+            });
+    }
+
+    updateStatus();
+</script>
+

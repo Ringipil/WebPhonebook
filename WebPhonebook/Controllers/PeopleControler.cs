@@ -1,16 +1,80 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebPhonebook.Interfaces;
 using WebPhonebook.Models;
+using PhonebookServices;
+using WebPhonebook.Services;
+using System;
+using System.Threading;
 
 public class PeopleController : Controller
 {
+    private readonly NameLoader _nameLoader;
     private readonly SqlDatabaseHandler _sqlHandler;
-    private readonly EfDatabaseHandler _efHandler;
+    private readonly EfDatabaseHandler _efHandler; 
+    private static string _generationStatus = " ";
+    private readonly NameGenerationService _nameGenerationService;
+    private static CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
-    public PeopleController(SqlDatabaseHandler sqlHandler, EfDatabaseHandler efHandler, IHttpContextAccessor httpContextAccessor)
+    public PeopleController(SqlDatabaseHandler sqlHandler, EfDatabaseHandler efHandler,NameLoader nameLoader,
+        IHttpContextAccessor httpContextAccessor, NameGenerationService nameGenerationService)
     {
         _sqlHandler = sqlHandler;
         _efHandler = efHandler;
+        _nameLoader = nameLoader;
+        _nameGenerationService = nameGenerationService;
+    }
+
+    public IActionResult Generate()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Generate(string selectedHandler)
+    {
+        if (_cancellationTokenSource != null)
+        {
+            _cancellationTokenSource.Cancel();
+        }
+
+        _cancellationTokenSource = new CancellationTokenSource();
+        var dbHandler = GetDbHandler(selectedHandler);
+
+        string message = "Generation started...";
+
+        await _nameGenerationService.StartGeneration(dbHandler, _cancellationTokenSource.Token,
+            (countAdded, elapsedTime, wasStopped) =>
+            {
+                message = wasStopped
+                    ? $"Generation stopped. {countAdded} names added in {elapsedTime:F2} seconds."
+                    : $"Generation complete. {countAdded} names added in {elapsedTime:F2} seconds.";
+
+                TempData["Message"] = message;
+            });
+
+        return RedirectToAction("Generate");
+    }
+
+    [HttpPost]
+    public IActionResult StopGeneration()
+    {
+        if (_cancellationTokenSource != null)
+        {
+            _cancellationTokenSource.Cancel();
+            TempData["Message"] = "Generation stopped.";
+        }
+        else
+        {
+            TempData["Message"] = "No generation process is running.";
+        }
+
+        return RedirectToAction("Generate");
+    }
+
+    [HttpGet]
+    public IActionResult GetGenerationStatus()
+    {
+        return Content(_nameGenerationService.GetGenerationStatus());
     }
 
     private IDatabaseHandler GetDbHandler(string selectedhandler)

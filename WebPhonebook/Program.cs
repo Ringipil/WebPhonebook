@@ -1,5 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PhonebookServices;
 using WebPhonebook;
+using WebPhonebook.Interfaces;
+using WebPhonebook.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,9 +22,16 @@ builder.Services.AddScoped<EfDatabaseHandler>();
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 builder.Services.AddSession();
 builder.Services.AddHttpContextAccessor();
-
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<NameLoader>();
+builder.Services.AddScoped<NameGenerationService>();
 
+//builder.Services.AddScoped<Func<string, IDatabaseHandler>>(serviceProvider => key =>
+//{
+//    return key == "ef"
+//        ? serviceProvider.GetRequiredService<SqlDatabaseHandler>()
+//        : serviceProvider.GetRequiredService<EfDatabaseHandler>();
+//});
 
 var app = builder.Build();
 

@@ -2,7 +2,6 @@
 using WebPhonebook;
 using WebPhonebook.Interfaces;
 using WebPhonebook.Models;
-using Microsoft.Extensions.Configuration;
 using PhonebookServices;
 
 public class EfDatabaseHandler : IDatabaseHandler
