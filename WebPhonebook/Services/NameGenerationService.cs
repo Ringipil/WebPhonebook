@@ -13,6 +13,14 @@ namespace WebPhonebook.Services
             _nameLoader = nameLoader ?? throw new ArgumentNullException(nameof(nameLoader));
         }
 
+        public string FormatGenerationMessage(int countAdded, double elapsedTime, bool wasStopped)
+        {
+            return wasStopped
+                ? $"Generation stopped. {countAdded} names added in {elapsedTime:F2} seconds."
+                : $"Generation complete. {countAdded} names added in {elapsedTime:F2} seconds.";
+        }
+
+
         public async Task StartGeneration(IDatabaseHandler dbHandler, CancellationToken cancellationToken, Action<int, double, bool> afterGeneration)
         {
             try
@@ -22,14 +30,16 @@ namespace WebPhonebook.Services
                 await dbHandler.GenerateUniqueNames(
                     _nameLoader, cancellationToken,
                     status => _generationStatus = status,
-                    afterGeneration
+                    (countAdded, elapsedTime, wasStopped) =>
+                    {
+                        _generationStatus = FormatGenerationMessage(countAdded, elapsedTime, wasStopped);
+                        afterGeneration(countAdded, elapsedTime, wasStopped);
+                    }
                 );
-
-                _generationStatus = "Generation complete.";
             }
             catch (OperationCanceledException)
             {
-                _generationStatus = "Generation was stopped.";
+                _generationStatus = FormatGenerationMessage(0, 0, true);
             }
             catch (Exception ex)
             {

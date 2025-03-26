@@ -33,10 +33,7 @@ namespace DesktopPhonebook
 
         private void LoadPeople(string filterByName = "", string filterByContact = "")
         {
-            peopleList = dbHandler.LoadPeople(filterByName, filterByContact)
-
-            .Take(10000)
-            .ToList();
+            peopleList = dbHandler.LoadPeople(filterByName, filterByContact);
 
             if (InvokeRequired)
             {

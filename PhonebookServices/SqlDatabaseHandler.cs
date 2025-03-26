@@ -7,7 +7,6 @@ using WebPhonebook.Models;
 public class SqlDatabaseHandler : IDatabaseHandler
 {
     private string connectionString;
-    private readonly string nameFilesDirectory;
     public SqlDatabaseHandler(IConfiguration configuration)
     {
         connectionString = configuration.GetConnectionString("DefaultConnection") ?? "Server=.\\SQLEXPRESS;Database=PeopleDB;Trusted_Connection=True;MultipleActiveResultSets=true;Encrypt=false";
@@ -45,7 +44,7 @@ public class SqlDatabaseHandler : IDatabaseHandler
         using (var connection = new SqlConnection(connectionString))
         {
             connection.Open();
-            string query = "SELECT Id, Name, PhoneNumber, Email FROM People WHERE 1=1";
+            string query = "SELECT TOP 10000 Id, Name, PhoneNumber, Email FROM People WHERE 1=1";
 
             if (!string.IsNullOrEmpty(filterByName))
             {
@@ -138,56 +137,69 @@ public class SqlDatabaseHandler : IDatabaseHandler
     {
         using (var connection = new SqlConnection(connectionString))
         {
-            connection.Open();
+            await connection.OpenAsync(cancellationToken);
             DateTime startTime = DateTime.Now;
             int countAdded = 0;
             int countChecked = 0;
             bool stopRequested = false;
-            int lastReportedCount = 0;
             int nextUpdateThreshold = 1000;
 
-            foreach (var first in nameLoader.FirstNames)
+            try
             {
-                foreach (var middle in nameLoader.MiddleNames)
+                foreach (var first in nameLoader.FirstNames)
                 {
-                    foreach (var last in nameLoader.LastNames)
+                    if (stopRequested) break;
+
+                    foreach (var middle in nameLoader.MiddleNames)
                     {
-                        if (cancellationToken.IsCancellationRequested)
+                        if (stopRequested) break;
+
+                        foreach (var last in nameLoader.LastNames)
                         {
-                            stopRequested = true;
-                            afterGeneration(countAdded, (DateTime.Now - startTime).TotalSeconds, stopRequested);
-                            return;
-                        }
-
-                        string fullName = $"{first} {middle} {last}";
-                        countChecked++;
-
-                        string checkQuery = "SELECT COUNT(*) FROM People WHERE Name = @Name";
-                        using (var checkCommand = new SqlCommand(checkQuery, connection))
-                        {
-                            checkCommand.Parameters.AddWithValue("@Name", fullName);
-                            int existingCount = Convert.ToInt32(checkCommand.ExecuteScalar());
-
-                            if (existingCount == 0)
+                            if (cancellationToken.IsCancellationRequested)
                             {
-                                string insertQuery = "INSERT INTO People (Name, PhoneNumber, Email) VALUES (@Name, '', '')";
-                                using (var insertCommand = new SqlCommand(insertQuery, connection))
+                                stopRequested = true;
+                                break;
+                            }
+
+                            string fullName = $"{first} {middle} {last}";
+                            countChecked++;
+
+                            string checkQuery = "SELECT COUNT(*) FROM People WHERE Name = @Name";
+                            using (var checkCommand = new SqlCommand(checkQuery, connection))
+                            {
+                                checkCommand.Parameters.AddWithValue("@Name", fullName);
+                                int existingCount = Convert.ToInt32(await checkCommand.ExecuteScalarAsync(cancellationToken));
+
+                                if (existingCount == 0)
                                 {
-                                    insertCommand.Parameters.AddWithValue("@Name", fullName);
-                                    await insertCommand.ExecuteNonQueryAsync();
-                                    countAdded++;
+                                    string insertQuery = "INSERT INTO People (Name, PhoneNumber, Email) VALUES (@Name, '', '')";
+                                    using (var insertCommand = new SqlCommand(insertQuery, connection))
+                                    {
+                                        insertCommand.Parameters.AddWithValue("@Name", fullName);
+                                        await insertCommand.ExecuteNonQueryAsync(cancellationToken);
+                                        countAdded++;
+                                    }
                                 }
                             }
-                        }
-                        if (countChecked >= nextUpdateThreshold)
-                        {
-                            updateStatus($"{countAdded} added, {countChecked} checked");
-                            nextUpdateThreshold += 1000;
+
+                            if (countChecked >= nextUpdateThreshold)
+                            {
+                                updateStatus($"{countAdded} added, {countChecked} checked");
+                                nextUpdateThreshold += 1000;
+                            }
                         }
                     }
                 }
             }
-            afterGeneration(countAdded, (DateTime.Now - startTime).TotalSeconds, stopRequested);
+            catch (OperationCanceledException)
+            {
+                stopRequested = true;
+            }
+            finally
+            {
+                afterGeneration(countAdded, (DateTime.Now - startTime).TotalSeconds, stopRequested);
+            }
         }
     }
 }

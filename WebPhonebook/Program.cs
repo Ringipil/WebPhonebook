@@ -18,20 +18,15 @@ builder.Services.AddDbContext<PeopleDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 builder.Services.AddScoped<SqlDatabaseHandler>();
+//builder.Services.AddTransient<EfDatabaseHandler>();
 builder.Services.AddScoped<EfDatabaseHandler>();
+//builder.Services.AddSingleton<EfDatabaseHandler>();
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 builder.Services.AddSession();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<NameLoader>();
 builder.Services.AddScoped<NameGenerationService>();
-
-//builder.Services.AddScoped<Func<string, IDatabaseHandler>>(serviceProvider => key =>
-//{
-//    return key == "ef"
-//        ? serviceProvider.GetRequiredService<SqlDatabaseHandler>()
-//        : serviceProvider.GetRequiredService<EfDatabaseHandler>();
-//});
 
 var app = builder.Build();
 

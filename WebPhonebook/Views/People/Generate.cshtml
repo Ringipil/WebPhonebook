@@ -1,4 +1,5 @@
-﻿@{
+﻿@model WebPhonebook.Models.GenerateViewModel
+@{
     ViewData["Title"] = "Generate Unique Names";
 }
 
@@ -11,16 +12,27 @@
     </div>
 }
 
-<!-- Start & Stop Buttons -->
-<form asp-action="Generate" asp-controller="People" method="post">
+<form asp-action="Generate" asp-controller="People" asp-route-selectedHandler="@Model.SelectedHandler">
     <button type="submit">Start Generation</button>
 </form>
 
-<form asp-action="StopGeneration" asp-controller="People" method="post">
+<form asp-action="StopGeneration" asp-controller="People" asp-route-selectedHandler="@Model.SelectedHandler">
     <button type="submit" style="background-color: red; color: white;">Stop Generation</button>
 </form>
 
 <p id="status"></p>
+
+<form id="handlerForm" asp-action="HandlerSwitch" method="post">
+    <label>
+        <input type="radio" asp-for="SelectedHandler" value="sql" onchange="handlerSwitch()" />
+        Use SQL Database
+    </label>
+    <label style="margin-left: 10px;">
+        <input type="radio" asp-for="SelectedHandler" value="ef" onchange="handlerSwitch()" />
+        Use EF Core Database
+    </label>
+    <br /><br />
+</form>
 
 <script>
     function updateStatus() {
@@ -32,6 +44,10 @@
             });
     }
 
+    function handlerSwitch() {
+        const handlerForm = document.getElementById('handlerForm');
+        handlerForm.submit();
+    }
+
     updateStatus();
 </script>
-

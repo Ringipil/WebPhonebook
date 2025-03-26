@@ -5,15 +5,15 @@ using PhonebookServices;
 using WebPhonebook.Services;
 using System;
 using System.Threading;
+using WebPhonebook;
 
 public class PeopleController : Controller
 {
     private readonly NameLoader _nameLoader;
     private readonly SqlDatabaseHandler _sqlHandler;
     private readonly EfDatabaseHandler _efHandler; 
-    private static string _generationStatus = " ";
     private readonly NameGenerationService _nameGenerationService;
-    private static CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+    private static CancellationTokenSource? _cancellationTokenSource = null;
 
     public PeopleController(SqlDatabaseHandler sqlHandler, EfDatabaseHandler efHandler,NameLoader nameLoader,
         IHttpContextAccessor httpContextAccessor, NameGenerationService nameGenerationService)
@@ -26,49 +26,73 @@ public class PeopleController : Controller
 
     public IActionResult Generate()
     {
-        return View();
+        var model = new GenerateViewModel
+        {
+            SelectedHandler = HttpContext.Session.GetString("SelectedHandler") ?? "ef"
+        };
+        return View(model);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Generate(string selectedHandler)
+    public IActionResult Generate(GenerateViewModel model)
     {
         if (_cancellationTokenSource != null)
         {
-            _cancellationTokenSource.Cancel();
+            TempData["Message"] = "Generation is already running.";
+            return RedirectToAction("Generate", new { selectedHandler = model.SelectedHandler });
         }
 
         _cancellationTokenSource = new CancellationTokenSource();
-        var dbHandler = GetDbHandler(selectedHandler);
-
-        string message = "Generation started...";
-
-        await _nameGenerationService.StartGeneration(dbHandler, _cancellationTokenSource.Token,
-            (countAdded, elapsedTime, wasStopped) =>
+        
+        Task.Run(async () =>
+        {
+            using (var scope = HttpContext.RequestServices.CreateScope())
             {
-                message = wasStopped
-                    ? $"Generation stopped. {countAdded} names added in {elapsedTime:F2} seconds."
-                    : $"Generation complete. {countAdded} names added in {elapsedTime:F2} seconds.";
+                IDatabaseHandler dbHandler = model.SelectedHandler == "sql"
+                    ? scope.ServiceProvider.GetRequiredService<SqlDatabaseHandler>()
+                    : scope.ServiceProvider.GetRequiredService<EfDatabaseHandler>();
 
-                TempData["Message"] = message;
-            });
+                await _nameGenerationService.StartGeneration(dbHandler, _cancellationTokenSource.Token,
+                    (countAdded, elapsedTime, wasStopped) =>
+                    {
+                        TempData["Message"] = _nameGenerationService.FormatGenerationMessage(countAdded, elapsedTime, wasStopped);
+                        _cancellationTokenSource = null;
+                    });
+            }
+        });
 
-        return RedirectToAction("Generate");
+        TempData["Message"] = "Generation started...";
+        return RedirectToAction("Generate", new { selectedHandler = model.SelectedHandler });
     }
 
     [HttpPost]
-    public IActionResult StopGeneration()
+    public IActionResult StopGeneration(GenerateViewModel model)
     {
         if (_cancellationTokenSource != null)
         {
             _cancellationTokenSource.Cancel();
-            TempData["Message"] = "Generation stopped.";
+            _cancellationTokenSource.Dispose();
+            _cancellationTokenSource = null;
         }
         else
         {
             TempData["Message"] = "No generation process is running.";
         }
 
-        return RedirectToAction("Generate");
+        return RedirectToAction("Generate", new { selectedHandler = model.SelectedHandler });
+    }
+
+    [HttpPost]
+    public IActionResult HandlerSwitch(GenerateViewModel model)
+    {
+        if (model.SelectedHandler != "sql" && model.SelectedHandler != "ef")
+        {
+            model.SelectedHandler = "sql";
+        }
+
+        HttpContext.Session.SetString("SelectedHandler", model.SelectedHandler);
+
+        return RedirectToAction("Generate", new { selectedHandler = model.SelectedHandler });
     }
 
     [HttpGet]
@@ -77,9 +101,9 @@ public class PeopleController : Controller
         return Content(_nameGenerationService.GetGenerationStatus());
     }
 
-    private IDatabaseHandler GetDbHandler(string selectedhandler)
+    private IDatabaseHandler GetDbHandler(string selectedHandler)
     {
-        return selectedhandler == "sql" ? _sqlHandler : _efHandler;
+        return selectedHandler == "sql" ? _sqlHandler : _efHandler;
     }
 
     public IActionResult Index(IndexViewModel model)
