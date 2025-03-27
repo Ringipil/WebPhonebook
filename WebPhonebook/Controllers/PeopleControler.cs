@@ -48,7 +48,7 @@ public class PeopleController : Controller
         {
             using (var scope = HttpContext.RequestServices.CreateScope())
             {
-                IDatabaseHandler dbHandler = model.SelectedHandler == "sql"
+                IDatabaseHandler dbHandler = model.SelectedHandler == "ef"
                     ? scope.ServiceProvider.GetRequiredService<SqlDatabaseHandler>()
                     : scope.ServiceProvider.GetRequiredService<EfDatabaseHandler>();
 

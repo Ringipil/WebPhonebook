@@ -23,6 +23,7 @@ builder.Services.AddScoped<EfDatabaseHandler>();
 //builder.Services.AddSingleton<EfDatabaseHandler>();
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 builder.Services.AddSession();
+builder.Services.AddDistributedMemoryCache();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<NameLoader>();
@@ -46,6 +47,13 @@ app.UseEndpoints(endpoints =>
     endpoints.MapControllerRoute(
         name: "default",
         pattern: "{controller=People}/{action=Index}/{id?}");
+});
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=People}/{action=Generate}/{id?}");
 });
 
 app.Run();
