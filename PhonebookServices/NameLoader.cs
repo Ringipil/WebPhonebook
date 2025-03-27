@@ -11,7 +11,7 @@ namespace PhonebookServices
 
         public NameLoader(IConfiguration configuration)
         {
-            nameFilesDirectory = configuration["NameFiles:Directory"] ?? "C:/Users/Administrator1/Desktop/Phonebook/NameFiles";
+            nameFilesDirectory = configuration["UploadSettings:UploadFolder"] ?? "wwwroot/uploads";
         }
 
         public void LoadNamesFromFiles()
