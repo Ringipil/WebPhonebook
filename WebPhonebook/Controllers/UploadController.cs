@@ -1,15 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PhonebookServices;
 using WebPhonebook.Models;
 
 namespace WebPhonebook.Controllers
 {
     public class UploadController : Controller
     {
-        private readonly string _uploadFolder;
+        private readonly NameLoader _nameLoader;
 
-        public UploadController(IConfiguration configuration)
+        public UploadController(NameLoader nameLoader)
         {
-            _uploadFolder = configuration["UploadSettings:UploadFolder"] ?? "wwwroot/uploads";
+            _nameLoader = nameLoader;
         }
 
         public IActionResult Index()
@@ -27,9 +28,9 @@ namespace WebPhonebook.Controllers
 
             try
             {
-                if (!Directory.Exists(_uploadFolder))
+                if (!Directory.Exists(_nameLoader.nameFilesDirectory))
                 {
-                    Directory.CreateDirectory(_uploadFolder);
+                    Directory.CreateDirectory(_nameLoader.nameFilesDirectory);
                 }
 
                 await SaveFile(model.FirstNamesFile, "firstNames.txt");
@@ -51,7 +52,7 @@ namespace WebPhonebook.Controllers
             if (file == null || file.Length == 0)
                 throw new Exception("Invalid file.");
 
-            string filePath = Path.Combine(_uploadFolder, fileName);
+            string filePath = Path.Combine(_nameLoader.nameFilesDirectory, fileName);
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 await file.CopyToAsync(stream);

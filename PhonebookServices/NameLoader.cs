@@ -4,14 +4,19 @@ namespace PhonebookServices
 {
     public class NameLoader
     {
-        private readonly string nameFilesDirectory;
+        public readonly string nameFilesDirectory;
         public List<string> FirstNames { get; set; }
         public List<string> MiddleNames { get; set; }
         public List<string> LastNames { get; set; }
 
         public NameLoader(IConfiguration configuration)
         {
-            nameFilesDirectory = configuration["UploadSettings:UploadFolder"] ?? "wwwroot/uploads";
+            nameFilesDirectory = GetNameFilesDirectory(configuration);
+        }
+
+        public static string GetNameFilesDirectory(IConfiguration configuration)
+        {
+            return configuration["UploadSettings:UploadFolder"] ?? "wwwroot/uploads";
         }
 
         public void LoadNamesFromFiles()
