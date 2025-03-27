@@ -28,9 +28,9 @@ namespace WebPhonebook.Controllers
 
             try
             {
-                if (!Directory.Exists(_nameLoader.nameFilesDirectory))
+                if (!Directory.Exists(_nameLoader.NameFilesDirectory))
                 {
-                    Directory.CreateDirectory(_nameLoader.nameFilesDirectory);
+                    Directory.CreateDirectory(_nameLoader.NameFilesDirectory);
                 }
 
                 await SaveFile(model.FirstNamesFile, "firstNames.txt");
@@ -52,7 +52,7 @@ namespace WebPhonebook.Controllers
             if (file == null || file.Length == 0)
                 throw new Exception("Invalid file.");
 
-            string filePath = Path.Combine(_nameLoader.nameFilesDirectory, fileName);
+            string filePath = Path.Combine(_nameLoader.NameFilesDirectory, fileName);
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 await file.CopyToAsync(stream);
