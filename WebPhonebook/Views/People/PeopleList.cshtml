@@ -1,7 +1,7 @@
 ﻿@model IndexViewModel
 
-<table class="table">
-    <thead>
+<table class="table table-hover">
+    <thead class="thead-light">
         <tr>
             <th>Name</th>
             <th>Phone</th>
@@ -17,10 +17,50 @@
                 <td>@person.PhoneNumber</td>
                 <td>@person.Email</td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@person.Id" asp-route-selectedHandler="@Model.SelectedHandler">Edit</a>
-                    <a asp-action="Delete" asp-route-id="@person.Id" asp-route-selectedHandler="@Model.SelectedHandler">Delete</a>
+                    <div class="btn-group btn-group-sm" role="group">
+                        <a asp-action="Edit" asp-route-id="@person.Id" asp-route-selectedHandler="@Model.SelectedHandler"
+                           class="btn btn-outline-primary">
+                            <i class="bi bi-pencil"></i> Edit
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@person.Id" asp-route-selectedHandler="@Model.SelectedHandler"
+                           class="btn btn-outline-danger">
+                            <i class="bi bi-trash"></i> Delete
+                        </a>
+                    </div>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
+<style>
+    /* Custom button styles to match the mild theme */
+    .btn-outline-primary {
+        color: #2e7d32;
+        border-color: #81c784;
+    }
+
+        .btn-outline-primary:hover {
+            background-color: #e8f5e9;
+            color: #1b5e20;
+        }
+
+    .btn-outline-danger {
+        color: #c62828;
+        border-color: #ef9a9a;
+    }
+
+        .btn-outline-danger:hover {
+            background-color: #ffebee;
+            color: #b71c1c;
+        }
+
+    .btn-group-sm > .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+    }
+
+    .bi {
+        margin-right: 0.25rem;
+    }
+</style>

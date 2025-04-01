@@ -3,34 +3,77 @@
     ViewData["Title"] = "Upload Files";
 }
 
-<h2>Upload Name Files</h2>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">
+                        <i class="bi bi-cloud-upload"></i> Upload Name Files
+                    </h2>
+                </div>
+                <div class="card-body">
+                    @if (ViewBag.Message != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show">
+                            @ViewBag.Message
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show">
+                            @ViewBag.Error
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
 
-@if (ViewBag.Message != null)
-{
-    <p style="color: green;">@ViewBag.Message</p>
-}
-@if (ViewBag.Error != null)
-{
-    <p style="color: red;">@ViewBag.Error</p>
-}
+                    <form asp-action="Upload" asp-controller="Upload" method="post" enctype="multipart/form-data" class="mt-3">
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">First Names File:</label>
+                            <div class="input-group">
+                                <input asp-for="FirstNamesFile" type="file" class="form-control" required>
+                            </div>
+                        </div>
 
-<div style="border: 1px solid #ccc; padding: 15px; width: 350px;">
-    <form asp-action="Upload" asp-controller="Upload" method="post" enctype="multipart/form-data">
-        <div style="margin-bottom: 10px;">
-            <label>First Names File:</label>
-            <input asp-for="FirstNamesFile" type="file" required />
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Middle Names File:</label>
+                            <div class="input-group">
+                                <input asp-for="MiddleNamesFile" type="file" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Last Names File:</label>
+                            <div class="input-group">
+                                <input asp-for="LastNamesFile" type="file" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <a asp-controller="People" asp-action="Index" class="btn btn-outline-secondary me-md-2">
+                                <i class="bi bi-arrow-left"></i> Back to Contacts
+                            </a>
+                            <button type="submit" class="btn btn-primary px-4">
+                                <i class="bi bi-upload"></i> Upload Files
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-        <hr style="border-top: 1px solid #aaa; margin: 15px 0;" />
-        <div style="margin-bottom: 10px;">
-            <label>Middle Names File:</label>
-            <input asp-for="MiddleNamesFile" type="file" required />
-        </div>
-        <hr style="border-top: 1px solid #aaa; margin: 15px 0;" />
-        <div style="margin-bottom: 10px;">
-            <label>Last Names File:</label>
-            <input asp-for="LastNamesFile" type="file" required />
-        </div>
-        <hr style="border-top: 1px solid #aaa; margin: 15px 0;" />
-        <button type="submit" style="display: block; margin: 10px auto;">Upload</button>
-    </form>
+    </div>
 </div>
+
+@section Styles {
+    <style>
+        .form-control[type="file"] {
+            padding: 0.375rem;
+        }
+
+        .form-control:focus {
+            border-color: #86b7fe;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+    </style>
+}

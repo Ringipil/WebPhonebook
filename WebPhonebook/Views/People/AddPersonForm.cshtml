@@ -1,10 +1,16 @@
 ﻿@model IndexViewModel
 
-<form asp-action="Add" method="post" asp-route-selectedHandler="@Model.SelectedHandler">
-    <input asp-for="NewPerson.Name" placeholder="Name" required />
-    <input asp-for="NewPerson.PhoneNumber" placeholder="Phone" required />
-    <input asp-for="NewPerson.Email" placeholder="Email" required />
-    <button type="submit">Add Person</button>
+<form asp-action="Add" method="post" asp-route-selectedHandler="@Model.SelectedHandler" class="mb-4 p-3 bg-light rounded">
+    <div class="mb-3">
+        <input class="form-control" asp-for="NewPerson.Name" placeholder="Name" required />
+    </div>
+    <div class="mb-3">
+        <input class="form-control" asp-for="NewPerson.PhoneNumber" placeholder="Phone" required />
+    </div>
+    <div class="mb-3">
+        <input class="form-control" asp-for="NewPerson.Email" placeholder="Email" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Add Person</button>
 </form>
 
 @section Scripts {

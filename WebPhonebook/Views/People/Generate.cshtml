@@ -3,36 +3,53 @@
     ViewData["Title"] = "Generate Unique Names";
 }
 
-<h2>Generate Unique Names</h2>
+<div class="container mt-4">
+    <h2 class="mb-4">Generate Unique Names</h2>
 
-@if (!string.IsNullOrEmpty(TempData["Message"] as string))
-{
-    <div style="border: 1px solid #ccc; padding: 10px; background-color: #f9f9f9; margin-bottom: 10px;">
-        <strong>@TempData["Message"]</strong>
+    @if (!string.IsNullOrEmpty(TempData["Message"] as string))
+    {
+        <div class="alert alert-info">
+            <strong>@TempData["Message"]</strong>
+        </div>
+    }
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="d-flex gap-3 mb-4">
+                <form asp-action="Generate" asp-controller="People" asp-route-selectedHandler="@Model.SelectedHandler">
+                    <button type="submit" class="btn btn-success">Start Generation</button>
+                </form>
+
+                <form asp-action="StopGeneration" asp-controller="People" asp-route-selectedHandler="@Model.SelectedHandler">
+                    <button type="submit" class="btn btn-danger">Stop Generation</button>
+                </form>
+            </div>
+
+            <div class="alert alert-info">
+                <h5 class="alert-heading">Status</h5>
+                <p id="status" class="mb-0">Checking status...</p>
+            </div>
+        </div>
     </div>
-}
 
-<form asp-action="Generate" asp-controller="People" asp-route-selectedHandler="@Model.SelectedHandler">
-    <button type="submit">Start Generation</button>
-</form>
-
-<form asp-action="StopGeneration" asp-controller="People" asp-route-selectedHandler="@Model.SelectedHandler">
-    <button type="submit" style="background-color: red; color: white;">Stop Generation</button>
-</form>
-
-<p id="status"></p>
-
-<form id="handlerForm" asp-action="HandlerSwitch" method="post">
-    <label>
-        <input type="radio" asp-for="SelectedHandler" value="sql" onchange="handlerSwitch()" />
-        Use SQL Database
-    </label>
-    <label style="margin-left: 10px;">
-        <input type="radio" asp-for="SelectedHandler" value="ef" onchange="handlerSwitch()" />
-        Use EF Core Database
-    </label>
-    <br /><br />
-</form>
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Database Handler</h5>
+        </div>
+        <div class="card-body">
+            <form id="handlerForm" asp-action="HandlerSwitch" method="post" class="d-flex gap-4">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" asp-for="SelectedHandler" value="sql" id="sqlHandler" onchange="handlerSwitch()" />
+                    <label class="form-check-label" for="sqlHandler">Use SQL Database</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" asp-for="SelectedHandler" value="ef" id="efHandler" onchange="handlerSwitch()" />
+                    <label class="form-check-label" for="efHandler">Use EF Core Database</label>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 <script>
     function updateStatus() {

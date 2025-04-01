@@ -4,20 +4,40 @@
     ViewData["Title"] = "People Manager";
 }
 
-<h2>Phonebook</h2>
+<div class="container mt-4">
+    <h2 class="mb-4">Phonebook</h2>
 
-<!-- Search Form -->
-<partial name="SearchForm"/>
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
 
-<!-- Add Person Form -->
-<partial name="AddPersonForm" />
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Search Contacts</h5>
+        </div>
+        <div class="card-body">
+            <partial name="SearchForm" />
+        </div>
+    </div>
 
-<!-- People list -->
-<div id="peopleListContainer">
-    <partial name="PeopleList" />
+    <div class="card mb-4">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0">Add New Contact</h5>
+        </div>
+        <div class="card-body">
+            <partial name="AddPersonForm" />
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header bg-info text-white">
+            <h5 class="mb-0">Contacts List</h5>
+        </div>
+        <div class="card-body">
+            <div id="peopleListContainer">
+                <partial name="PeopleList" />
+            </div>
+        </div>
+    </div>
 </div>
-
-@if (TempData["Error"] != null)
-{
-    <p style="color: red;">@TempData["Error"]</p>
-}

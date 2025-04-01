@@ -1,17 +1,37 @@
 ﻿@model IndexViewModel
 
-<form method="post" asp-route-selectedHandler="@Model.SelectedHandler">
-    <div class="mb-3">
-        <label>Name:</label>
-        <input type="text" class="form-control" asp-for="NewPerson.Name" required />
-    </div>
-    <div class="mb-3">
-        <label>Phone Number:</label>
-        <input type="text" class="form-control" asp-for="NewPerson.PhoneNumber" required />
-    </div>
-    <div class="mb-3">
-        <label>Email:</label>
-        <input type="email" class="form-control" asp-for="NewPerson.Email" required />
-    </div>
-    <button type="submit" class="btn btn-success">Add Person</button>
-</form>
+<div class="border p-4 rounded bg-light">
+    <h4 class="mb-4">Add New Contact</h4>
+
+    <form method="post" asp-route-selectedHandler="@Model.SelectedHandler">
+        <div class="mb-3">
+            <label class="form-label">Name:</label>
+            <input type="text" class="form-control" asp-for="NewPerson.Name" required placeholder="Enter full name">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Phone:</label>
+            <input type="tel" class="form-control" asp-for="NewPerson.PhoneNumber" required placeholder="Enter phone number">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Email:</label>
+            <input type="email" class="form-control" asp-for="NewPerson.Email" required placeholder="Enter email address">
+        </div>
+
+        <div class="text-end">
+            <button type="submit" class="btn btn-primary px-4">
+                <i class="bi bi-person-plus"></i> Add Contact
+            </button>
+        </div>
+    </form>
+</div>
+
+@section Styles {
+    <style>
+        .form-control:focus {
+            border-color: #86b7fe;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+    </style>
+}

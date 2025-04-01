@@ -1,15 +1,26 @@
 ﻿@model IndexViewModel
 
-<form asp-action="Index" method="get">
-    <input asp-for="SearchName" placeholder="Search by name..." />
-    <input asp-for="SearchContact" placeholder="Search by phone or email..." />
-    <label>
-        <input type="radio" asp-for="SelectedHandler" value="sql" />
-        Use SQL Database Handler
-    </label>
-    <label>
-        <input type="radio" asp-for="SelectedHandler" value="ef" />
-        Use EF Core Database Handler
-    </label>
-    <button type="submit">Search</button>
+<form asp-action="Index" method="get" class="mb-4 p-3 bg-light rounded">
+    <div class="row g-3">
+        <div class="col-md-5">
+            <input class="form-control" asp-for="SearchName" placeholder="Search by name..." />
+        </div>
+        <div class="col-md-5">
+            <input class="form-control" asp-for="SearchContact" placeholder="Search by phone or email..." />
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Search</button>
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" asp-for="SelectedHandler" value="sql" id="sqlHandler" />
+            <label class="form-check-label" for="sqlHandler">Use SQL Database</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" asp-for="SelectedHandler" value="ef" id="efHandler" />
+            <label class="form-check-label" for="efHandler">Use EF Core Database</label>
+        </div>
+    </div>
 </form>

@@ -7,29 +7,165 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/WebPhonebook.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        /* Muted Green Theme */
+        :root {
+            --primary-green: #4caf50;
+            --secondary-green: #81c784;
+            --dark-green: #388e3c;
+            --light-green: #e8f5e9;
+            --accent: #ff7043;
+            --nav-text: #2e7d32;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navigation */
+        .navbar {
+            background-color: #ffffff !important;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .navbar-brand {
+            color: #2e7d32 !important;
+            font-weight: 600;
+            text-shadow: 1px 1px 2px rgba(46, 125, 50, 0.2);
+        }
+
+        .nav-link {
+            color: var(--nav-text) !important;
+            font-weight: 500;
+            margin: 0 8px;
+            transition: color 0.2s ease;
+        }
+
+            .nav-link:hover, .nav-link.active {
+                color: var(--primary-green) !important;
+            }
+
+        /* Cards */
+        .card {
+            border: 1px solid #e0e0e0;
+            background-color: #ffffff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .card-header {
+            background-color: var(--light-green) !important;
+            color: var(--nav-text) !important;
+            font-weight: 600;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 0.75rem 1.5rem;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background-color: var(--primary-green);
+            border-color: var(--dark-green);
+            color: white;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border-radius: 4px;
+        }
+
+            .btn-primary:hover {
+                background-color: var(--dark-green);
+                border-color: var(--dark-green);
+                transform: translateY(-1px);
+            }
+
+        /* Alerts */
+        .alert-success {
+            background-color: var(--light-green);
+            border-color: var(--secondary-green);
+            color: var(--nav-text);
+        }
+
+        .alert-danger {
+            background-color: #ffebee;
+            color: #c62828;
+            border-color: #ef9a9a;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: #ffffff;
+            color: #616161;
+            border-top: 1px solid #e0e0e0;
+            margin-top: auto;
+            padding: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+            .footer a {
+                color: var(--nav-text);
+                text-decoration: none;
+                font-weight: 500;
+            }
+
+                .footer a:hover {
+                    color: var(--primary-green);
+                }
+
+        /* Form Elements */
+        .form-control:focus {
+            border-color: var(--secondary-green);
+            box-shadow: 0 0 0 0.2rem rgba(76, 175, 80, 0.1);
+        }
+
+        /* Active Nav Link */
+        .nav-link.active {
+            position: relative;
+        }
+
+            .nav-link.active:after {
+                content: '';
+                position: absolute;
+                bottom: -1px;
+                left: 0;
+                right: 0;
+                height: 2px;
+                background-color: var(--primary-green);
+            }
+    </style>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="People" asp-action="Index">WebPhonebook</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm border-bottom mb-3">
+            <div class="container">
+                <a class="navbar-brand" asp-controller="People" asp-action="Index">
+                    <i class="bi bi-book me-2"></i>WebPhonebook
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Upload" asp-action="Index">Upload</a>
+                            <a class="nav-link" asp-controller="Upload" asp-action="Index">
+                                <i class="bi bi-upload me-1"></i> Upload
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="People" asp-action="Generate">Generate Names</a>
+                            <a class="nav-link" asp-controller="People" asp-action="Generate">
+                                <i class="bi bi-magic me-1"></i> Generate
+                            </a>
                         </li>
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
@@ -37,13 +173,26 @@
     </div>
 
     <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - WebPhonebook - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        <div class="container text-center">
+            &copy; 2025 - WebPhonebook - <a asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        // Highlight active nav link
+        document.addEventListener('DOMContentLoaded', function() {
+            const current = location.pathname;
+            document.querySelectorAll('.nav-link').forEach(link => {
+                if (link.getAttribute('href') === current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+    @await RenderSectionAsync("Styles", required: false)
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
