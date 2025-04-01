@@ -7,6 +7,7 @@ namespace WebPhonebook.Interfaces
     {
         void InitializeDatabase();
         List<Person> LoadPeople(string filterByName = "", string filterByContact = "");
+        Person LoadPerson(int id);
         void AddPerson(Person person);
         void UpdatePerson(Person person);
         void DeletePerson(int id);

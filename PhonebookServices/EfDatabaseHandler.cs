@@ -3,6 +3,7 @@ using WebPhonebook;
 using WebPhonebook.Interfaces;
 using WebPhonebook.Models;
 using PhonebookServices;
+using System;
 
 public class EfDatabaseHandler : IDatabaseHandler
 {
@@ -15,6 +16,18 @@ public class EfDatabaseHandler : IDatabaseHandler
     public void InitializeDatabase()
     {
         throw new NotSupportedException("InitializeDatabase is not supported in Entity Framework mode.");
+    }
+
+    public Person LoadPerson(int id)
+    {
+        var person = _dbContext.People.FirstOrDefault(p => p.Id == id);
+
+        if (person == null)
+        {
+            throw new InvalidOperationException($"Person with ID {id} not found.");
+        }
+
+        return person;
     }
 
     public List<Person> LoadPeople(string filterByName = "", string filterByContact = "")
@@ -31,7 +44,7 @@ public class EfDatabaseHandler : IDatabaseHandler
             query = query.Where(p => p.PhoneNumber.Contains(filterByContact) || p.Email.Contains(filterByContact));
         }
 
-        return query.Take(10000).ToList();
+        return query.OrderBy(p => p.Name).Take(10000).ToList();
     }
 
     public void AddPerson(Person person)

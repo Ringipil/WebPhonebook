@@ -141,8 +141,7 @@ public class PeopleController : Controller
 
     public IActionResult Edit(int id, string selectedHandler)
     {
-        var person = GetDbHandler(selectedHandler).LoadPeople().FirstOrDefault(p => p.Id == id);
-
+        var person = GetDbHandler(selectedHandler).LoadPerson(id);
         if (person == null)
         {
             TempData["Error"] = "Person not found.";
@@ -153,14 +152,12 @@ public class PeopleController : Controller
 
     public IActionResult Delete(int id, string selectedHandler)
     {
-        var personExists = GetDbHandler(selectedHandler).LoadPeople().Any(p => p.Id == id);
-
-        if (!personExists)
+        var person = GetDbHandler(selectedHandler).LoadPerson(id);
+        if (person == null)
         {
             TempData["Error"] = "Person not found.";
             return RedirectToAction("Index");
         }
-
         GetDbHandler(selectedHandler).DeletePerson(id);
         return RedirectToAction("Index");
     }

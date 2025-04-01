@@ -1,4 +1,6 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using System;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using PhonebookServices;
 using WebPhonebook.Interfaces;
@@ -38,6 +40,37 @@ public class SqlDatabaseHandler : IDatabaseHandler
         }
     }
 
+    public Person LoadPerson(int id)
+    {
+        using (var connection = new SqlConnection(connectionString))
+        {
+            connection.Open();
+            string query = "SELECT Id, Name, PhoneNumber, Email FROM People WHERE Id = @Id";
+
+            using (var command = new SqlCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@Id", id);
+
+                using (var reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        return new Person(
+                            Convert.ToInt32(reader["Id"]),
+                            reader["Name"].ToString(),
+                            reader["PhoneNumber"].ToString(),
+                            reader["Email"].ToString()
+                        );
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException($"Person with ID {id} not found.");
+                    }
+                }
+            }
+        }
+    }
+
     public List<Person> LoadPeople(string filterByName = "", string filterByContact = "")
     {
         var peopleList = new List<Person>();
@@ -54,6 +87,8 @@ public class SqlDatabaseHandler : IDatabaseHandler
             {
                 query += " AND (PhoneNumber LIKE @Contact OR Email LIKE @Contact)";
             }
+
+            query += " ORDER BY Name";
 
             using (var command = new SqlCommand(query, connection))
             {
