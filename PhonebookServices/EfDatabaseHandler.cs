@@ -44,7 +44,7 @@ public class EfDatabaseHandler : IDatabaseHandler
             query = query.Where(p => p.PhoneNumber.Contains(filterByContact) || p.Email.Contains(filterByContact));
         }
 
-        return query.OrderBy(p => p.Name).Take(10000).ToList();
+        return query.OrderBy(p => p.Name).Take(1000).ToList();
     }
 
     public void AddPerson(Person person)

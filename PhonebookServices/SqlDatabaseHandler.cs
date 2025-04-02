@@ -77,7 +77,7 @@ public class SqlDatabaseHandler : IDatabaseHandler
         using (var connection = new SqlConnection(connectionString))
         {
             connection.Open();
-            string query = "SELECT TOP 10000 Id, Name, PhoneNumber, Email FROM People WHERE 1=1";
+            string query = "SELECT TOP 1000 Id, Name, PhoneNumber, Email FROM People WHERE 1=1";
 
             if (!string.IsNullOrEmpty(filterByName))
             {
