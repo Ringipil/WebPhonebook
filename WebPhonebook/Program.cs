@@ -37,6 +37,7 @@ using (var scope = app.Services.CreateScope())
     sqlDbHandler.InitializeDatabase();
 }
 
+app.UseDeveloperExceptionPage();
 app.UseSession();
 app.UseRouting();
 app.UseStaticFiles();
